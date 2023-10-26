@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  rabbitmq-1:
+    image: rabbitmq:management
+    container_name: rabbitmq-1
+    hostname: rabbitmq-1
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=secretcookie
+      - RABBITMQ_NODENAME=node1
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - rabbitmq-cluster
+
+  rabbitmq-2:
+    image: rabbitmq:management
+    container_name: rabbitmq-2
+    hostname: rabbitmq-2
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=secretcookie
+      - RABBITMQ_NODENAME=node2
+    networks:
+      - rabbitmq-cluster
+    depends_on:
+      - rabbitmq-1
+
+  rabbitmq-3:
+    image: rabbitmq:management
+    container_name: rabbitmq-3
+    hostname: rabbitmq-3
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=secretcookie
+      - RABBITMQ_NODENAME=node3
+    networks:
+      - rabbitmq-cluster
+    depends_on:
+      - rabbitmq-1
+
+networks:
+  rabbitmq-cluster:
+    driver: bridge
